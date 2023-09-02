@@ -44,6 +44,7 @@ impl CPU {
         match instruction {
             // // 8-bit Load instructions
             Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
+            Instruction::LDri(dest_reg, value) => self.ld_ri(dest_reg, value),
 
             // 8 bit arithmetic / logic
             Instruction::ADDr(reg) => self.add_register(reg, false),
@@ -165,7 +166,11 @@ impl CPU {
     }
 
     fn ld_rr(&mut self, dest_reg: ArithmeticTarget, src_reg: ArithmeticTarget) {
-        self.write_register(dest_reg, self.read_register(src_reg));
+        self.ld_ri(dest_reg, self.read_register(src_reg));
+    }
+
+    fn ld_ri(&mut self, dest_reg: ArithmeticTarget, value: u8) {
+        self.write_register(dest_reg, value);
     }
 
     fn read_register(&self, reg: ArithmeticTarget) -> u8 {
