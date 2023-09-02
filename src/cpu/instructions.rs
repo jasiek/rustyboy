@@ -49,16 +49,18 @@ pub enum Instruction {
     DECRR(ArithmeticTarget16),   // dec rr
 
     /* Rotate and Shift instructions */
-    RLCA,                   // rotate A left
-    RLA,                    // rotate A left with carry
-    RRCA,                   // rotate A right
-    RRA,                    // rotate A right with carry
-    RLCr(ArithmeticTarget), // rotate left
-    RRCr(ArithmeticTarget), // rotate right
-    RLr(ArithmeticTarget),  // rotate left with carry
-    RRr(ArithmeticTarget),  // rotate right with carry
-    SLAr(ArithmeticTarget), // shift left arithmetic
-    SRAr(ArithmeticTarget), // shift right arithmetic
+    RLCA,                    // rotate A left
+    RLA,                     // rotate A left with carry
+    RRCA,                    // rotate A right
+    RRA,                     // rotate A right with carry
+    RLCr(ArithmeticTarget),  // rotate left
+    RRCr(ArithmeticTarget),  // rotate right
+    RLr(ArithmeticTarget),   // rotate left with carry
+    RRr(ArithmeticTarget),   // rotate right with carry
+    SLAr(ArithmeticTarget),  // shift left arithmetic
+    SRAr(ArithmeticTarget),  // shift right arithmetic
+    SRLr(ArithmeticTarget),  // shift right logical
+    SWAPr(ArithmeticTarget), // exchange low/hi nibble
 
     /* CPU Control instructions */
     SCF,  // scf

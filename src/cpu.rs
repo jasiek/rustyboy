@@ -84,6 +84,8 @@ impl CPU {
             Instruction::RRr(reg8) => self.rotate_r_right(reg8, true),
             Instruction::SLAr(reg8) => self.shift_arithmetic(reg8, true),
             Instruction::SRAr(reg8) => self.shift_arithmetic(reg8, false),
+            Instruction::SRLr(reg8) => self.shift_logical(reg8, false),
+            Instruction::SWAPr(reg8) => self.swap_r(reg8),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -255,15 +257,28 @@ impl CPU {
     }
 
     fn shift_arithmetic(&mut self, reg: ArithmeticTarget, left: bool) {
-        let mut val = self.read_register(reg);
+        let mut val = self.read_register(reg) as i8;
         if left {
             val = val << 1
         } else {
             val = val >> 1
         }
+        self.write_register(reg, val as u8);
+    }
+
+    fn shift_logical(&mut self, reg: ArithmeticTarget, left: bool) {
+        let mut val = self.read_register(reg);
+        if left {
+            val = val << 1;
+        } else {
+            val = val >> 1;
+        }
         self.write_register(reg, val);
     }
 
+    fn swap_r(&mut self, reg: ArithmeticTarget) {
+        self.write_register(reg, self.read_register(reg).rotate_left(4));
+    }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
         match reg {
