@@ -33,8 +33,9 @@ pub fn new_cpu() -> CPU {
 impl CPU {
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
-            Instruction::ADDr(target) => self.add_target(target),
+            Instruction::ADDr(target) => self.add_target(target, false),
             Instruction::ADDi(value) => self.add_value(value),
+            Instruction::ADCr(target) => self.add_target(target, true),
             _ => todo!(),
         }
     }
@@ -67,8 +68,11 @@ impl CPU {
         value
     }
 
-    fn add_target(&mut self, target: ArithmeticTarget) {
-        let new_value = self.add(self.read_target(target));
+    fn add_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
+        let mut new_value = self.add(self.read_target(target));
+        if with_carry && self.registers.f.carry {
+            new_value = self.add(1)
+        }
         self.registers.a = new_value;
     }
 

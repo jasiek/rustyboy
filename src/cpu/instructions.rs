@@ -11,4 +11,5 @@ pub enum ArithmeticTarget {
 pub enum Instruction {
     ADDr(ArithmeticTarget), // add A,r
     ADDi(u8),               // add A,n
+    ADCr(ArithmeticTarget), // adc A,r
 }
