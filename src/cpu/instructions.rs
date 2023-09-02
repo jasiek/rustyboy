@@ -13,4 +13,6 @@ pub enum Instruction {
     ADDi(u8),               // add A,n
     ADCr(ArithmeticTarget), // adc A,r
     ADCi(u8),               // adc A,n
+    SUBr(ArithmeticTarget), // sub A,r
+    SUBi(u8),               // sub A,i
 }

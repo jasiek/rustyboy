@@ -49,6 +49,11 @@ impl Registers {
         self.h = ((value & 0xFF00) >> 8) as u8;
         self.l = (value & 0x00FF) as u8;
     }
+
+    // Other
+    pub fn set_flags(&mut self, value: u8, overflow: bool) {
+        self.f.set(value, overflow, self.a);
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -63,6 +68,15 @@ const ZERO_FLAG_BYTE_POSITION: u8 = 7;
 const SUBTRACT_FLAG_BYTE_POSITION: u8 = 6;
 const HALF_CARRY_FLAG_BYTE_POSITION: u8 = 5;
 const CARRY_FLAG_BYTE_POSITION: u8 = 4;
+
+impl FlagsRegister {
+    pub fn set(&mut self, value: u8, overflow: bool, a: u8) {
+        self.zero = value == 0;
+        self.subtract = false;
+        self.carry = overflow;
+        self.half_carry = (a & 0xF) + (value & 0xF) > 0xF;
+    }
+}
 
 impl std::convert::From<FlagsRegister> for u8 {
     fn from(flag: FlagsRegister) -> u8 {
