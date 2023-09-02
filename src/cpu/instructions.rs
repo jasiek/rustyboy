@@ -62,6 +62,10 @@ pub enum Instruction {
     SRLr(ArithmeticTarget),  // shift right logical
     SWAPr(ArithmeticTarget), // exchange low/hi nibble
 
+    /* Single bit operations */
+    BITnr(u8, ArithmeticTarget), // test bit n of r
+    SETnr(u8, ArithmeticTarget), // set bit n of r
+
     /* CPU Control instructions */
     SCF,  // scf
     CCF,  // ccf

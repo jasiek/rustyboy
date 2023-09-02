@@ -10,6 +10,14 @@ pub struct Registers {
     pub sp: u16,
 }
 
+#[derive(Clone, Copy)]
+pub struct FlagsRegister {
+    pub zero: bool,       // Z
+    pub subtract: bool,   // N
+    pub half_carry: bool, // H
+    pub carry: bool,      // C
+}
+
 impl Registers {
     // AF
     pub fn get_af(&self) -> u16 {
@@ -67,14 +75,6 @@ impl Registers {
     pub fn cpl(&mut self) {
         self.f.cpl();
     }
-}
-
-#[derive(Clone, Copy)]
-pub struct FlagsRegister {
-    pub zero: bool,       // Z
-    pub subtract: bool,   // N
-    pub half_carry: bool, // H
-    pub carry: bool,      // C
 }
 
 const ZERO_FLAG_BYTE_POSITION: u8 = 7;

@@ -87,6 +87,10 @@ impl CPU {
             Instruction::SRLr(reg8) => self.shift_logical(reg8, false),
             Instruction::SWAPr(reg8) => self.swap_r(reg8),
 
+            /* Single bit operations */
+            Instruction::BITnr(which, reg8) => self.bit_nr(which, reg8),
+            Instruction::SETnr(which, reg8) => self.set_nr(which, reg8),
+
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
             Instruction::CCF => self.complement_carry_flag(),
@@ -278,6 +282,27 @@ impl CPU {
 
     fn swap_r(&mut self, reg: ArithmeticTarget) {
         self.write_register(reg, self.read_register(reg).rotate_left(4));
+    }
+
+    fn bit_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+        if which > 7 {
+            panic!("trying to read {} bit of 8 bit register", which);
+        }
+
+        let mask = (1 << which) & self.read_register(reg);
+        self.registers.f.zero = mask == 0;
+        self.registers.f.subtract = false;
+        self.registers.f.half_carry = true;
+    }
+
+    fn set_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+        if which > 7 {
+            panic!("trying to set {} bit of 8 bit register", which);
+        }
+
+        let mask = (1 << which);
+        let val = self.read_register(reg) | mask;
+        self.write_register(reg, val);
     }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
