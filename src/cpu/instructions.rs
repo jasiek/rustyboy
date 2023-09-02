@@ -55,6 +55,8 @@ pub enum Instruction {
     RRA,                    // rotate A right with carry
     RLCr(ArithmeticTarget), // rotate left
     RRCr(ArithmeticTarget), // rotate right
+    RLr(ArithmeticTarget),  // rotate left with carry
+    RRr(ArithmeticTarget),  // rotate right with carry
 
     /* CPU Control instructions */
     SCF,  // scf

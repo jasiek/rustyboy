@@ -80,6 +80,8 @@ impl CPU {
             Instruction::RRA => self.rotate_a_right(true),
             Instruction::RLCr(reg8) => self.rotate_r_left(reg8, false),
             Instruction::RRCr(reg8) => self.rotate_r_right(reg8, false),
+            Instruction::RLr(reg8) => self.rotate_r_left(reg8, true),
+            Instruction::RRr(reg8) => self.rotate_r_right(reg8, true),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
