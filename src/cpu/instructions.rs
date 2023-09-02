@@ -1,3 +1,4 @@
+#[derive(Copy, Clone)]
 pub enum ArithmeticTarget {
     A,
     B,
@@ -8,6 +9,7 @@ pub enum ArithmeticTarget {
     L,
 }
 
+#[derive(Copy, Clone)]
 pub enum ArithmeticTarget16 {
     BC,
     DE,
@@ -43,6 +45,16 @@ pub enum Instruction {
 
     /* 16-bit Arithmetic/Logic instructions */
     ADDHLRR(ArithmeticTarget16), // add HL, rr
+    INCRR(ArithmeticTarget16),   // inc rr
+    DECRR(ArithmeticTarget16),   // dec rr
+
+    /* Rotate and Shift instructions */
+    RLCA,                   // rotate A left
+    RLA,                    // rotate A left with carry
+    RRCA,                   // rotate A right
+    RRA,                    // rotate A right with carry
+    RLCr(ArithmeticTarget), // rotate left
+    RRCr(ArithmeticTarget), // rotate right
 
     /* CPU Control instructions */
     SCF,  // scf

@@ -69,7 +69,17 @@ impl CPU {
             Instruction::CPL => self.cpl(),
 
             /* 16-bit Arithmetic/Logic instructions */
-            Instruction::ADDHLRR(reg2) => self.add_hl_rr(reg2),
+            Instruction::ADDHLRR(reg16) => self.add_hl_rr(reg16),
+            Instruction::INCRR(reg16) => self.inc_register16(reg16),
+            Instruction::DECRR(reg16) => self.dec_register16(reg16),
+
+            /* Rotate and Shift instructions */
+            Instruction::RLCA => self.rotate_a_left(false),
+            Instruction::RLA => self.rotate_a_left(true),
+            Instruction::RRCA => self.rotate_a_right(false),
+            Instruction::RRA => self.rotate_a_right(true),
+            Instruction::RLCr(reg8) => self.rotate_r_left(reg8, false),
+            Instruction::RRCr(reg8) => self.rotate_r_right(reg8, false),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -158,8 +168,16 @@ impl CPU {
         self.add_register(reg, false);
     }
 
+    fn inc_register16(&mut self, reg: ArithmeticTarget16) {
+        self.write_register16(reg, self.read_register16(reg) + 1)
+    }
+
     fn dec_register(&mut self, reg: ArithmeticTarget) {
         self.sub_register(reg, false);
+    }
+
+    fn dec_register16(&mut self, reg: ArithmeticTarget16) {
+        self.write_register16(reg, self.read_register16(reg) - 1)
     }
 
     fn set_carry_flag(&mut self) {
@@ -184,7 +202,7 @@ impl CPU {
     }
 
     fn add_hl_rr(&mut self, src_reg: ArithmeticTarget16) {
-        let (new_value, overflow) = self
+        let (new_value, _overflow) = self
             .registers
             .get_hl()
             .overflowing_add(self.read_register16(src_reg));
@@ -192,6 +210,44 @@ impl CPU {
         let [_, l] = new_value.to_be_bytes();
         // TODO: 02/09/2023 (jps): not sure this is correct
         self.registers.set_flags(l, false);
+    }
+
+    fn rotate_r_left(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+        let mut val = self.read_register(reg);
+        if with_carry {
+            let chop = val & 1;
+            val = val << 1;
+            if self.registers.f.carry {
+                val = val & 1
+            }
+            self.registers.f.carry = chop == 1;
+        } else {
+            val = val.rotate_left(1);
+        }
+        self.write_register(reg, val);
+    }
+
+    fn rotate_r_right(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+        let mut val = self.read_register(reg);
+        if with_carry {
+            let chop = val & 1;
+            val = val >> 1;
+            if self.registers.f.carry {
+                val = val | (1 << 7)
+            }
+            self.registers.f.carry = chop == 1;
+        } else {
+            val = val.rotate_right(1);
+        }
+        self.write_register(reg, val);
+    }
+
+    fn rotate_a_left(&mut self, with_carry: bool) {
+        self.rotate_r_left(ArithmeticTarget::A, with_carry);
+    }
+
+    fn rotate_a_right(&mut self, with_carry: bool) {
+        self.rotate_r_right(ArithmeticTarget::A, with_carry);
     }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
@@ -203,32 +259,25 @@ impl CPU {
         }
     }
 
-    fn read_register(&self, reg: ArithmeticTarget) -> u8 {
-        let mut value = 0;
+    fn write_register16(&mut self, reg: ArithmeticTarget16, value: u16) {
         match reg {
-            ArithmeticTarget::A => {
-                value = self.registers.a;
-            }
-            ArithmeticTarget::B => {
-                value = self.registers.b;
-            }
-            ArithmeticTarget::C => {
-                value = self.registers.c;
-            }
-            ArithmeticTarget::D => {
-                value = self.registers.d;
-            }
-            ArithmeticTarget::E => {
-                value = self.registers.e;
-            }
-            ArithmeticTarget::H => {
-                value = self.registers.h;
-            }
-            ArithmeticTarget::L => {
-                value = self.registers.l;
-            }
+            ArithmeticTarget16::BC => self.registers.set_bc(value),
+            ArithmeticTarget16::DE => self.registers.set_de(value),
+            ArithmeticTarget16::HL => self.registers.set_hl(value),
+            ArithmeticTarget16::SP => self.registers.sp = value,
         }
-        value
+    }
+
+    fn read_register(&self, reg: ArithmeticTarget) -> u8 {
+        match reg {
+            ArithmeticTarget::A => self.registers.a,
+            ArithmeticTarget::B => self.registers.b,
+            ArithmeticTarget::C => self.registers.c,
+            ArithmeticTarget::D => self.registers.d,
+            ArithmeticTarget::E => self.registers.e,
+            ArithmeticTarget::H => self.registers.h,
+            ArithmeticTarget::L => self.registers.l,
+        }
     }
 
     fn write_register(&mut self, reg: ArithmeticTarget, value: u8) {
