@@ -23,4 +23,6 @@ pub enum Instruction {
     XORi(u8),               // xor A,n
     ORr(ArithmeticTarget),  // or  A,r
     ORi(u8),                // or  A,n
+    CPr(ArithmeticTarget),  // cp  A,r
+    CPi(u8),                // cp  A,i
 }

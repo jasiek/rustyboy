@@ -56,6 +56,8 @@ impl CPU {
             Instruction::XORi(value) => self.xor_value(value),
             Instruction::ORr(target) => self.or_target(target),
             Instruction::ORi(value) => self.or_value(value),
+            Instruction::CPr(target) => self.cp_target(target),
+            Instruction::CPi(value) => self.cp_value(value),
             _ => todo!(),
         }
     }
@@ -125,6 +127,14 @@ impl CPU {
     fn or_value(&mut self, value: u8) {
         let new_value = self.registers.a.bitor(value);
         self.registers.a = new_value;
+    }
+
+    fn cp_target(&mut self, target: ArithmeticTarget) {
+        self.cp_value(self.read_target(target));
+    }
+
+    fn cp_value(&mut self, value: u8) {
+        self.sub(value);
     }
 
     fn read_target(&self, target: ArithmeticTarget) -> u8 {
