@@ -34,6 +34,7 @@ impl CPU {
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
             Instruction::ADD(target) => self.add_target(target),
+            Instruction::ADDHL(target) => self.add_hl_target(target),
             _ => todo!(),
         }
     }
@@ -71,13 +72,31 @@ impl CPU {
         self.registers.a = new_value;
     }
 
+    fn add_hl_target(&mut self, target: ArithmeticTarget) {
+        let new_value = self.add_hl(self.read_target(target));
+        self.registers.set_hl(new_value);
+    }
+
     fn add(&mut self, value: u8) -> u8 {
         let (new_value, did_overflow) = self.registers.a.overflowing_add(value);
+        self.set_flags(new_value, did_overflow);
 
-        self.registers.f.zero = new_value == 0;
-        self.registers.f.subtract = false;
-        self.registers.f.carry = did_overflow;
-        self.registers.f.half_carry = (self.registers.a & 0xF) + (value & 0xF) > 0xF;
         new_value
+    }
+
+    fn add_hl(&mut self, value: u8) -> u16 {
+        let (new_hl_value, did_overflow) =
+            self.registers.get_hl().overflowing_add(u16::from(value));
+        let [h, l] = new_hl_value.to_be_bytes();
+        self.set_flags(l, did_overflow);
+
+        new_hl_value
+    }
+
+    fn set_flags(&mut self, value: u8, overflow: bool) {
+        self.registers.f.zero = value == 0;
+        self.registers.f.subtract = false;
+        self.registers.f.carry = overflow;
+        self.registers.f.half_carry = (self.registers.a & 0xF) + (value & 0xF) > 0xF;
     }
 }
