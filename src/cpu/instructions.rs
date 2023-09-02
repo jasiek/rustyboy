@@ -21,4 +21,6 @@ pub enum Instruction {
     ANDi(u8),               // and A,n
     XORr(ArithmeticTarget), // xor A,r
     XORi(u8),               // xor A,n
+    ORr(ArithmeticTarget),  // or  A,r
+    ORi(u8),                // or  A,n
 }
