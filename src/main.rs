@@ -1,9 +1,9 @@
 mod cpu;
 
-use crate::cpu::NewCPU;
+use crate::cpu::new_cpu;
 
 fn main() {
-    let _cpu = NewCPU();
+    let _cpu = new_cpu();
 
     println!("Hello, world!");
 }
