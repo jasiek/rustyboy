@@ -31,11 +31,19 @@ pub fn new_cpu() -> CPU {
 }
 
 impl CPU {
+    pub fn test_run(&mut self) {
+        self.execute(Instruction::ADDr(ArithmeticTarget::A));
+        self.execute(Instruction::ADDi(3));
+        self.execute(Instruction::ADCr(ArithmeticTarget::B));
+        self.execute(Instruction::ADCi(2));
+    }
+
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
             Instruction::ADDr(target) => self.add_target(target, false),
-            Instruction::ADDi(value) => self.add_value(value),
+            Instruction::ADDi(value) => self.add_value(value, false),
             Instruction::ADCr(target) => self.add_target(target, true),
+            Instruction::ADCi(value) => self.add_value(value, true),
             _ => todo!(),
         }
     }
@@ -70,15 +78,20 @@ impl CPU {
 
     fn add_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
         let mut new_value = self.add(self.read_target(target));
-        if with_carry && self.registers.f.carry {
-            new_value = self.add(1)
-        }
         self.registers.a = new_value;
+        if with_carry && self.registers.f.carry {
+            new_value = self.add(1);
+            self.registers.a = new_value;
+        }
     }
 
-    fn add_value(&mut self, value: u8) {
-        let new_value = self.add(value);
+    fn add_value(&mut self, value: u8, with_carry: bool) {
+        let mut new_value = self.add(value);
         self.registers.a = new_value;
+        if with_carry && self.registers.f.carry {
+            new_value = self.add(1);
+            self.registers.a = new_value;
+        }
     }
 
     fn add(&mut self, value: u8) -> u8 {

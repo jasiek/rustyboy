@@ -3,7 +3,8 @@ mod cpu;
 use crate::cpu::new_cpu;
 
 fn main() {
-    let _cpu = new_cpu();
+    let mut cpu = new_cpu();
+    cpu.test_run();
 
     println!("Hello, world!");
 }
