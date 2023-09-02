@@ -1,7 +1,7 @@
 mod instructions;
 mod registers;
 
-use std::ops::{BitAnd, BitOr, BitXor};
+use std::ops::{BitAnd, BitOr, BitXor, Not};
 
 use crate::cpu::instructions::{ArithmeticTarget, Instruction};
 use crate::cpu::registers::{FlagsRegister, Registers};
@@ -65,6 +65,7 @@ impl CPU {
             Instruction::CPi(value) => self.cp_value(value),
             Instruction::INCr(reg) => self.inc_register(reg),
             Instruction::DECr(reg) => self.dec_register(reg),
+            Instruction::CPL => self.cpl(),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -171,6 +172,11 @@ impl CPU {
 
     fn ld_ri(&mut self, dest_reg: ArithmeticTarget, value: u8) {
         self.write_register(dest_reg, value);
+    }
+
+    fn cpl(&mut self) {
+        self.registers.a = self.registers.a.not();
+        self.registers.cpl();
     }
 
     fn read_register(&self, reg: ArithmeticTarget) -> u8 {

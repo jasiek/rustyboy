@@ -32,6 +32,7 @@ pub enum Instruction {
     CPi(u8),                // cp  A,i
     INCr(ArithmeticTarget), // inc r
     DECr(ArithmeticTarget), // dec r
+    CPL,                    // cpl
 
     /* CPU Control instructions */
     SCF,  // scf

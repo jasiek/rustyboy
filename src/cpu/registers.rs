@@ -62,14 +62,18 @@ impl Registers {
     pub fn complement_carry_flag(&mut self) {
         self.f.complement_carry_flag();
     }
+
+    pub fn cpl(&mut self) {
+        self.f.cpl();
+    }
 }
 
 #[derive(Clone, Copy)]
 pub struct FlagsRegister {
-    pub zero: bool,
-    pub subtract: bool,
-    pub half_carry: bool,
-    pub carry: bool,
+    pub zero: bool,       // Z
+    pub subtract: bool,   // N
+    pub half_carry: bool, // H
+    pub carry: bool,      // C
 }
 
 const ZERO_FLAG_BYTE_POSITION: u8 = 7;
@@ -95,6 +99,11 @@ impl FlagsRegister {
         self.zero = true;
         self.subtract = false;
         self.carry = !self.carry;
+    }
+
+    pub fn cpl(&mut self) {
+        self.subtract = true;
+        self.half_carry = true;
     }
 }
 
