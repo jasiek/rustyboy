@@ -43,24 +43,24 @@ impl CPU {
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
             // 8 bit arithmetic / logic
-            Instruction::ADDr(target) => self.add_target(target, false),
+            Instruction::ADDr(reg) => self.add_register(reg, false),
             Instruction::ADDi(value) => self.add_value(value, false),
-            Instruction::ADCr(target) => self.add_target(target, true),
+            Instruction::ADCr(reg) => self.add_register(reg, true),
             Instruction::ADCi(value) => self.add_value(value, true),
-            Instruction::SUBr(target) => self.sub_target(target, false),
+            Instruction::SUBr(reg) => self.sub_register(reg, false),
             Instruction::SUBi(value) => self.sub_value(value, false),
-            Instruction::SBCr(target) => self.sub_target(target, true),
+            Instruction::SBCr(reg) => self.sub_register(reg, true),
             Instruction::SBCi(value) => self.sub_value(value, true),
-            Instruction::ANDr(target) => self.and_target(target),
+            Instruction::ANDr(reg) => self.and_register(reg),
             Instruction::ANDi(value) => self.and_value(value),
-            Instruction::XORr(target) => self.xor_target(target),
+            Instruction::XORr(reg) => self.xor_register(reg),
             Instruction::XORi(value) => self.xor_value(value),
-            Instruction::ORr(target) => self.or_target(target),
+            Instruction::ORr(reg) => self.or_register(reg),
             Instruction::ORi(value) => self.or_value(value),
-            Instruction::CPr(target) => self.cp_target(target),
+            Instruction::CPr(reg) => self.cp_register(reg),
             Instruction::CPi(value) => self.cp_value(value),
-            Instruction::INCr(target) => self.inc_target(target),
-            Instruction::DECr(target) => self.dec_target(target),
+            Instruction::INCr(reg) => self.inc_register(reg),
+            Instruction::DECr(reg) => self.dec_register(reg),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -70,8 +70,8 @@ impl CPU {
         }
     }
 
-    fn add_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
-        self.add_value(self.read_target(target), with_carry);
+    fn add_register(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+        self.add_value(self.read_register(reg), with_carry);
     }
 
     fn add_value(&mut self, value: u8, with_carry: bool) {
@@ -90,8 +90,8 @@ impl CPU {
         new_value
     }
 
-    fn sub_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
-        self.sub_value(self.read_target(target), with_carry);
+    fn sub_register(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+        self.sub_value(self.read_register(reg), with_carry);
     }
 
     fn sub_value(&mut self, value: u8, with_carry: bool) {
@@ -110,8 +110,8 @@ impl CPU {
         new_value
     }
 
-    fn and_target(&mut self, target: ArithmeticTarget) {
-        self.and_value(self.read_target(target));
+    fn and_register(&mut self, reg: ArithmeticTarget) {
+        self.and_value(self.read_register(reg));
     }
 
     fn and_value(&mut self, value: u8) {
@@ -119,8 +119,8 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn xor_target(&mut self, target: ArithmeticTarget) {
-        self.xor_value(self.read_target(target));
+    fn xor_register(&mut self, reg: ArithmeticTarget) {
+        self.xor_value(self.read_register(reg));
     }
 
     fn xor_value(&mut self, value: u8) {
@@ -128,8 +128,8 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn or_target(&mut self, target: ArithmeticTarget) {
-        self.or_value(self.read_target(target));
+    fn or_register(&mut self, reg: ArithmeticTarget) {
+        self.or_value(self.read_register(reg));
     }
 
     fn or_value(&mut self, value: u8) {
@@ -137,20 +137,20 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn cp_target(&mut self, target: ArithmeticTarget) {
-        self.cp_value(self.read_target(target));
+    fn cp_register(&mut self, reg: ArithmeticTarget) {
+        self.cp_value(self.read_register(reg));
     }
 
     fn cp_value(&mut self, value: u8) {
         self.sub(value);
     }
 
-    fn inc_target(&mut self, target: ArithmeticTarget) {
-        self.add_target(target, false);
+    fn inc_register(&mut self, reg: ArithmeticTarget) {
+        self.add_register(reg, false);
     }
 
-    fn dec_target(&mut self, target: ArithmeticTarget) {
-        self.sub_target(target, false);
+    fn dec_register(&mut self, reg: ArithmeticTarget) {
+        self.sub_register(reg, false);
     }
 
     fn set_carry_flag(&mut self) {
@@ -161,9 +161,9 @@ impl CPU {
         self.registers.complement_carry_flag();
     }
 
-    fn read_target(&self, target: ArithmeticTarget) -> u8 {
+    fn read_register(&self, reg: ArithmeticTarget) -> u8 {
         let mut value = 0;
-        match target {
+        match reg {
             ArithmeticTarget::A => {
                 value = self.registers.a;
             }

@@ -9,6 +9,7 @@ pub enum ArithmeticTarget {
 }
 
 pub enum Instruction {
+    // 8-bit Arithmetic/Logic instructions
     ADDr(ArithmeticTarget), // add A,r
     ADDi(u8),               // add A,n
     ADCr(ArithmeticTarget), // adc A,r
@@ -27,8 +28,10 @@ pub enum Instruction {
     CPi(u8),                // cp  A,i
     INCr(ArithmeticTarget), // inc r
     DECr(ArithmeticTarget), // dec r
-    SCF,                    // scf
-    CCF,                    // ccf
-    NOP,                    // nop
-    HALT,                   // halt
+
+    // CPU Control instructions
+    SCF,  // scf
+    CCF,  // ccf
+    NOP,  // nop
+    HALT, // halt
 }
