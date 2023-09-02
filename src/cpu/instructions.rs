@@ -29,4 +29,6 @@ pub enum Instruction {
     DECr(ArithmeticTarget), // dec r
     SCF,                    // scf
     CCF,                    // ccf
+    NOP,                    // nop
+    HALT,                   // halt
 }

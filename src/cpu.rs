@@ -42,6 +42,7 @@ impl CPU {
 
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
+            // 8 bit arithmetic / logic
             Instruction::ADDr(target) => self.add_target(target, false),
             Instruction::ADDi(value) => self.add_value(value, false),
             Instruction::ADCr(target) => self.add_target(target, true),
@@ -60,8 +61,12 @@ impl CPU {
             Instruction::CPi(value) => self.cp_value(value),
             Instruction::INCr(target) => self.inc_target(target),
             Instruction::DECr(target) => self.dec_target(target),
+
+            // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
             Instruction::CCF => self.complement_carry_flag(),
+            Instruction::NOP => {}
+            Instruction::HALT => { /* todo later */ }
         }
     }
 
