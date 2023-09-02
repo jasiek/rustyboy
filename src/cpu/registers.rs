@@ -54,6 +54,14 @@ impl Registers {
     pub fn set_flags(&mut self, value: u8, overflow: bool) {
         self.f.set(value, overflow, self.a);
     }
+
+    pub fn set_carry_flag(&mut self) {
+        self.f.set_carry_flag();
+    }
+
+    pub fn complement_carry_flag(&mut self) {
+        self.f.complement_carry_flag();
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -75,6 +83,18 @@ impl FlagsRegister {
         self.subtract = false;
         self.carry = overflow;
         self.half_carry = (a & 0xF) + (value & 0xF) > 0xF;
+    }
+
+    pub fn set_carry_flag(&mut self) {
+        self.zero = true;
+        self.subtract = false;
+        self.carry = true;
+    }
+
+    pub fn complement_carry_flag(&mut self) {
+        self.zero = true;
+        self.subtract = false;
+        self.carry = !self.carry;
     }
 }
 

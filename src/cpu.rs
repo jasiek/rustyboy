@@ -60,6 +60,8 @@ impl CPU {
             Instruction::CPi(value) => self.cp_value(value),
             Instruction::INCr(target) => self.inc_target(target),
             Instruction::DECr(target) => self.dec_target(target),
+            Instruction::SCF => self.set_carry_flag(),
+            Instruction::CCF => self.complement_carry_flag(),
         }
     }
 
@@ -144,6 +146,14 @@ impl CPU {
 
     fn dec_target(&mut self, target: ArithmeticTarget) {
         self.sub_target(target, false);
+    }
+
+    fn set_carry_flag(&mut self) {
+        self.registers.set_carry_flag();
+    }
+
+    fn complement_carry_flag(&mut self) {
+        self.registers.complement_carry_flag();
     }
 
     fn read_target(&self, target: ArithmeticTarget) -> u8 {

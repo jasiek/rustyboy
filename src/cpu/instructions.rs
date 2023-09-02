@@ -27,4 +27,6 @@ pub enum Instruction {
     CPi(u8),                // cp  A,i
     INCr(ArithmeticTarget), // inc r
     DECr(ArithmeticTarget), // dec r
+    SCF,                    // scf
+    CCF,                    // ccf
 }
