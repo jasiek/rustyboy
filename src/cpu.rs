@@ -58,7 +58,8 @@ impl CPU {
             Instruction::ORi(value) => self.or_value(value),
             Instruction::CPr(target) => self.cp_target(target),
             Instruction::CPi(value) => self.cp_value(value),
-            _ => todo!(),
+            Instruction::INCr(target) => self.inc_target(target),
+            Instruction::DECr(target) => self.dec_target(target),
         }
     }
 
@@ -135,6 +136,14 @@ impl CPU {
 
     fn cp_value(&mut self, value: u8) {
         self.sub(value);
+    }
+
+    fn inc_target(&mut self, target: ArithmeticTarget) {
+        self.add_target(target, false);
+    }
+
+    fn dec_target(&mut self, target: ArithmeticTarget) {
+        self.sub_target(target, false);
     }
 
     fn read_target(&self, target: ArithmeticTarget) -> u8 {

@@ -25,4 +25,6 @@ pub enum Instruction {
     ORi(u8),                // or  A,n
     CPr(ArithmeticTarget),  // cp  A,r
     CPi(u8),                // cp  A,i
+    INCr(ArithmeticTarget), // inc r
+    DECr(ArithmeticTarget), // dec r
 }
