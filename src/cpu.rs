@@ -42,6 +42,9 @@ impl CPU {
 
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
+            // // 8-bit Load instructions
+            Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
+
             // 8 bit arithmetic / logic
             Instruction::ADDr(reg) => self.add_register(reg, false),
             Instruction::ADDi(value) => self.add_value(value, false),
@@ -161,6 +164,10 @@ impl CPU {
         self.registers.complement_carry_flag();
     }
 
+    fn ld_rr(&mut self, dest_reg: ArithmeticTarget, src_reg: ArithmeticTarget) {
+        self.write_register(dest_reg, self.read_register(src_reg));
+    }
+
     fn read_register(&self, reg: ArithmeticTarget) -> u8 {
         let mut value = 0;
         match reg {
@@ -187,5 +194,31 @@ impl CPU {
             }
         }
         value
+    }
+
+    fn write_register(&mut self, reg: ArithmeticTarget, value: u8) {
+        match reg {
+            ArithmeticTarget::A => {
+                self.registers.a = value;
+            }
+            ArithmeticTarget::B => {
+                self.registers.b = value;
+            }
+            ArithmeticTarget::C => {
+                self.registers.c = value;
+            }
+            ArithmeticTarget::D => {
+                self.registers.d = value;
+            }
+            ArithmeticTarget::E => {
+                self.registers.e = value;
+            }
+            ArithmeticTarget::H => {
+                self.registers.h = value;
+            }
+            ArithmeticTarget::L => {
+                self.registers.l = value;
+            }
+        }
     }
 }
