@@ -65,6 +65,7 @@ pub enum Instruction {
     /* Single bit operations */
     BITnr(u8, ArithmeticTarget), // test bit n of r
     SETnr(u8, ArithmeticTarget), // set bit n of r
+    RESnr(u8, ArithmeticTarget), // unset bit n of r
 
     /* CPU Control instructions */
     SCF,  // scf

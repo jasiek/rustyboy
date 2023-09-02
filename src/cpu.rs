@@ -90,6 +90,7 @@ impl CPU {
             /* Single bit operations */
             Instruction::BITnr(which, reg8) => self.bit_nr(which, reg8),
             Instruction::SETnr(which, reg8) => self.set_nr(which, reg8),
+            Instruction::RESnr(which, reg8) => self.res_nr(which, reg8),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -302,6 +303,16 @@ impl CPU {
 
         let mask = (1 << which);
         let val = self.read_register(reg) | mask;
+        self.write_register(reg, val);
+    }
+
+    fn res_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+        if which > 7 {
+            panic!("trying to set {} bit of 8 bit register", which);
+        }
+
+        let mask = (1 << which).not();
+        let val = self.read_register(reg) & mask;
         self.write_register(reg, val);
     }
 
