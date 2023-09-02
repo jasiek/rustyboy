@@ -1,6 +1,8 @@
 mod instructions;
 mod registers;
 
+use std::ops::BitAnd;
+
 use crate::cpu::instructions::{ArithmeticTarget, Instruction};
 use crate::cpu::registers::{FlagsRegister, Registers};
 
@@ -48,8 +50,59 @@ impl CPU {
             Instruction::SUBi(value) => self.sub_value(value, false),
             Instruction::SBCr(target) => self.sub_target(target, true),
             Instruction::SBCi(value) => self.sub_value(value, true),
+            Instruction::ANDr(target) => self.and_target(target),
+            Instruction::ANDi(value) => self.and_value(value),
             _ => todo!(),
         }
+    }
+
+    fn add_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
+        self.add_value(self.read_target(target), with_carry);
+    }
+
+    fn add_value(&mut self, value: u8, with_carry: bool) {
+        let mut new_value = self.add(value);
+        self.registers.a = new_value;
+        if with_carry && self.registers.f.carry {
+            new_value = self.add(1);
+            self.registers.a = new_value;
+        }
+    }
+
+    fn add(&mut self, value: u8) -> u8 {
+        let (new_value, did_overflow) = self.registers.a.overflowing_add(value);
+        self.registers.set_flags(new_value, did_overflow);
+
+        new_value
+    }
+
+    fn sub_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
+        self.sub_value(self.read_target(target), with_carry);
+    }
+
+    fn sub_value(&mut self, value: u8, with_carry: bool) {
+        let mut new_value = self.sub(value);
+        self.registers.a = new_value;
+        if with_carry && self.registers.f.carry {
+            new_value = self.sub(1);
+            self.registers.a = new_value;
+        }
+    }
+
+    fn sub(&mut self, value: u8) -> u8 {
+        let (new_value, did_overflow) = self.registers.a.overflowing_sub(value);
+        self.registers.set_flags(new_value, did_overflow);
+
+        new_value
+    }
+
+    fn and_target(&mut self, target: ArithmeticTarget) {
+        self.and_value(self.read_target(target));
+    }
+
+    fn and_value(&mut self, value: u8) {
+        let new_value = self.registers.a.bitand(value);
+        self.registers.a = new_value;
     }
 
     fn read_target(&self, target: ArithmeticTarget) -> u8 {
@@ -78,55 +131,5 @@ impl CPU {
             }
         }
         value
-    }
-
-    fn add_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
-        let mut new_value = self.add(self.read_target(target));
-        self.registers.a = new_value;
-        if with_carry && self.registers.f.carry {
-            new_value = self.add(1);
-            self.registers.a = new_value;
-        }
-    }
-
-    fn add_value(&mut self, value: u8, with_carry: bool) {
-        let mut new_value = self.add(value);
-        self.registers.a = new_value;
-        if with_carry && self.registers.f.carry {
-            new_value = self.add(1);
-            self.registers.a = new_value;
-        }
-    }
-
-    fn add(&mut self, value: u8) -> u8 {
-        let (new_value, did_overflow) = self.registers.a.overflowing_add(value);
-        self.registers.set_flags(new_value, did_overflow);
-
-        new_value
-    }
-
-    fn sub_target(&mut self, target: ArithmeticTarget, with_carry: bool) {
-        let mut new_value = self.sub(self.read_target(target));
-        self.registers.a = new_value;
-        if with_carry && self.registers.f.carry {
-            new_value = self.sub(1);
-            self.registers.a = new_value;
-        }
-    }
-
-    fn sub_value(&mut self, value: u8, with_carry: bool) {
-        let mut new_value = self.sub(value);
-        self.registers.a = new_value;
-        if with_carry && self.registers.f.carry {
-            new_value = self.sub(1);
-            self.registers.a = new_value;
-        }
-    }
-
-    fn sub(&mut self, value: u8) -> u8 {
-        let (new_value, did_overflow) = self.registers.a.overflowing_sub(value);
-        self.registers.set_flags(new_value, did_overflow);
-
-        new_value
     }
 }

@@ -17,4 +17,6 @@ pub enum Instruction {
     SUBi(u8),               // sub A,n
     SBCr(ArithmeticTarget), // sbc A,r
     SBCi(u8),               // sbc A,n
+    ANDr(ArithmeticTarget), // and A,r
+    ANDi(u8),               // and A,n
 }
