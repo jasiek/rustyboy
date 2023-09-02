@@ -3,7 +3,7 @@ mod registers;
 
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 
-use crate::cpu::instructions::{ArithmeticTarget, Instruction};
+use crate::cpu::instructions::{ArithmeticTarget, ArithmeticTarget16, Instruction};
 use crate::cpu::registers::{FlagsRegister, Registers};
 
 pub struct CPU {
@@ -27,6 +27,7 @@ pub fn new_cpu() -> CPU {
             },
             h: 0,
             l: 0,
+            sp: 0, // TODO: 02/09/2023 (jps): this is probably the wrong value
         },
         pc: 0,
     }
@@ -66,6 +67,9 @@ impl CPU {
             Instruction::INCr(reg) => self.inc_register(reg),
             Instruction::DECr(reg) => self.dec_register(reg),
             Instruction::CPL => self.cpl(),
+
+            /* 16-bit Arithmetic/Logic instructions */
+            Instruction::ADDHLRR(reg2) => self.add_hl_rr(reg2),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -177,6 +181,26 @@ impl CPU {
     fn cpl(&mut self) {
         self.registers.a = self.registers.a.not();
         self.registers.cpl();
+    }
+
+    fn add_hl_rr(&mut self, src_reg: ArithmeticTarget16) {
+        let (new_value, overflow) = self
+            .registers
+            .get_hl()
+            .overflowing_add(self.read_register16(src_reg));
+        // TODO: 02/09/2023 (jps): does this belong here?
+        let [_, l] = new_value.to_be_bytes();
+        // TODO: 02/09/2023 (jps): not sure this is correct
+        self.registers.set_flags(l, false);
+    }
+
+    fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
+        match reg {
+            ArithmeticTarget16::BC => self.registers.get_bc(),
+            ArithmeticTarget16::DE => self.registers.get_de(),
+            ArithmeticTarget16::HL => self.registers.get_hl(),
+            ArithmeticTarget16::SP => self.registers.sp,
+        }
     }
 
     fn read_register(&self, reg: ArithmeticTarget) -> u8 {

@@ -8,6 +8,13 @@ pub enum ArithmeticTarget {
     L,
 }
 
+pub enum ArithmeticTarget16 {
+    BC,
+    DE,
+    HL,
+    SP,
+}
+
 pub enum Instruction {
     /* 8-bit Load instructions */
     LDrr(ArithmeticTarget, ArithmeticTarget), // LD r,r'
@@ -33,6 +40,9 @@ pub enum Instruction {
     INCr(ArithmeticTarget), // inc r
     DECr(ArithmeticTarget), // dec r
     CPL,                    // cpl
+
+    /* 16-bit Arithmetic/Logic instructions */
+    ADDHLRR(ArithmeticTarget16), // add HL, rr
 
     /* CPU Control instructions */
     SCF,  // scf
