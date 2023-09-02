@@ -19,4 +19,6 @@ pub enum Instruction {
     SBCi(u8),               // sbc A,n
     ANDr(ArithmeticTarget), // and A,r
     ANDi(u8),               // and A,n
+    XORr(ArithmeticTarget), // xor A,r
+    XORi(u8),               // xor A,n
 }

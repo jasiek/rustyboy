@@ -1,7 +1,7 @@
 mod instructions;
 mod registers;
 
-use std::ops::BitAnd;
+use std::ops::{BitAnd, BitXor};
 
 use crate::cpu::instructions::{ArithmeticTarget, Instruction};
 use crate::cpu::registers::{FlagsRegister, Registers};
@@ -52,6 +52,8 @@ impl CPU {
             Instruction::SBCi(value) => self.sub_value(value, true),
             Instruction::ANDr(target) => self.and_target(target),
             Instruction::ANDi(value) => self.and_value(value),
+            Instruction::XORr(target) => self.xor_target(target),
+            Instruction::XORi(value) => self.xor_value(value),
             _ => todo!(),
         }
     }
@@ -102,6 +104,15 @@ impl CPU {
 
     fn and_value(&mut self, value: u8) {
         let new_value = self.registers.a.bitand(value);
+        self.registers.a = new_value;
+    }
+
+    fn xor_target(&mut self, target: ArithmeticTarget) {
+        self.xor_value(self.read_target(target));
+    }
+
+    fn xor_value(&mut self, value: u8) {
+        let new_value = self.registers.a.bitxor(value);
         self.registers.a = new_value;
     }
 
