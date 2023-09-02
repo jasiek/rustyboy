@@ -9,6 +9,6 @@ pub enum ArithmeticTarget {
 }
 
 pub enum Instruction {
-    ADD(ArithmeticTarget),
-    ADDHL(ArithmeticTarget),
+    ADDr(ArithmeticTarget), // add A,r
+    ADDi(u8),               // add A,n
 }

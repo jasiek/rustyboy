@@ -33,8 +33,8 @@ pub fn new_cpu() -> CPU {
 impl CPU {
     fn execute(&mut self, instruction: Instruction) {
         match instruction {
-            Instruction::ADD(target) => self.add_target(target),
-            Instruction::ADDHL(target) => self.add_hl_target(target),
+            Instruction::ADDr(target) => self.add_target(target),
+            Instruction::ADDi(value) => self.add_value(value),
             _ => todo!(),
         }
     }
@@ -72,9 +72,9 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn add_hl_target(&mut self, target: ArithmeticTarget) {
-        let new_value = self.add_hl(self.read_target(target));
-        self.registers.set_hl(new_value);
+    fn add_value(&mut self, value: u8) {
+        let new_value = self.add(value);
+        self.registers.a = new_value;
     }
 
     fn add(&mut self, value: u8) -> u8 {
@@ -82,15 +82,6 @@ impl CPU {
         self.set_flags(new_value, did_overflow);
 
         new_value
-    }
-
-    fn add_hl(&mut self, value: u8) -> u16 {
-        let (new_hl_value, did_overflow) =
-            self.registers.get_hl().overflowing_add(u16::from(value));
-        let [h, l] = new_hl_value.to_be_bytes();
-        self.set_flags(l, did_overflow);
-
-        new_hl_value
     }
 
     fn set_flags(&mut self, value: u8, overflow: bool) {
