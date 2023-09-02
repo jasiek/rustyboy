@@ -14,5 +14,7 @@ pub enum Instruction {
     ADCr(ArithmeticTarget), // adc A,r
     ADCi(u8),               // adc A,n
     SUBr(ArithmeticTarget), // sub A,r
-    SUBi(u8),               // sub A,i
+    SUBi(u8),               // sub A,n
+    SBCr(ArithmeticTarget), // sbc A,r
+    SBCi(u8),               // sbc A,n
 }

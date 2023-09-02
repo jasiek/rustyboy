@@ -46,6 +46,8 @@ impl CPU {
             Instruction::ADCi(value) => self.add_value(value, true),
             Instruction::SUBr(target) => self.sub_target(target, false),
             Instruction::SUBi(value) => self.sub_value(value, false),
+            Instruction::SBCr(target) => self.sub_target(target, true),
+            Instruction::SBCi(value) => self.sub_value(value, true),
             _ => todo!(),
         }
     }
