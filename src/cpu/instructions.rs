@@ -21,6 +21,7 @@ pub enum Instruction {
     /* 8-bit Load instructions */
     LDrr(ArithmeticTarget, ArithmeticTarget), // LD r,r'
     LDri(ArithmeticTarget, u8),               // LD r,i
+    LDrrnn(ArithmeticTarget16, u16),          // LD rr,nn
 
     /* 8-bit Arithmetic/Logic instructions */
     ADDr(ArithmeticTarget), // add A,r

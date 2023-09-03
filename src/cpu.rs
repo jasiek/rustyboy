@@ -46,6 +46,7 @@ impl CPU {
             // // 8-bit Load instructions
             Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
             Instruction::LDri(dest_reg, value) => self.ld_ri(dest_reg, value),
+            Instruction::LDrrnn(dest_reg, value) => self.ld_rrnn(dest_reg, value),
 
             // 8 bit arithmetic / logic
             Instruction::ADDr(reg) => self.add_register(reg, false),
@@ -301,7 +302,7 @@ impl CPU {
             panic!("trying to set {} bit of 8 bit register", which);
         }
 
-        let mask = (1 << which);
+        let mask = u8::from(1 << which);
         let val = self.read_register(reg) | mask;
         self.write_register(reg, val);
     }
@@ -311,9 +312,13 @@ impl CPU {
             panic!("trying to set {} bit of 8 bit register", which);
         }
 
-        let mask = (1 << which).not();
+        let mask = (1 << which).not() as u8;
         let val = self.read_register(reg) & mask;
         self.write_register(reg, val);
+    }
+
+    fn ld_rrnn(&mut self, reg: ArithmeticTarget16, value: u16) {
+        self.write_register16(reg, value);
     }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
