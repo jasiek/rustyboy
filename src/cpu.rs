@@ -47,6 +47,7 @@ impl CPU {
             Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
             Instruction::LDri(dest_reg, value) => self.ld_ri(dest_reg, value),
             Instruction::LDrrnn(dest_reg, value) => self.ld_rrnn(dest_reg, value),
+            Instruction::LDSPHL() => self.ld_sphl(),
 
             // 8 bit arithmetic / logic
             Instruction::ADDr(reg) => self.add_register(reg, false),
@@ -319,6 +320,13 @@ impl CPU {
 
     fn ld_rrnn(&mut self, reg: ArithmeticTarget16, value: u16) {
         self.write_register16(reg, value);
+    }
+
+    fn ld_sphl(&mut self) {
+        self.write_register16(
+            ArithmeticTarget16::SP,
+            self.read_register16(ArithmeticTarget16::HL),
+        )
     }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {
