@@ -46,8 +46,6 @@ impl CPU {
             // // 8-bit Load instructions
             Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
             Instruction::LDri(dest_reg, value) => self.ld_ri(dest_reg, value),
-            Instruction::LDrrnn(dest_reg, value) => self.ld_rrnn(dest_reg, value),
-            Instruction::LDSPHL() => self.ld_sphl(),
 
             // 8 bit arithmetic / logic
             Instruction::ADDr(reg) => self.add_register(reg, false),
@@ -93,6 +91,12 @@ impl CPU {
             Instruction::BITnr(which, reg8) => self.bit_nr(which, reg8),
             Instruction::SETnr(which, reg8) => self.set_nr(which, reg8),
             Instruction::RESnr(which, reg8) => self.res_nr(which, reg8),
+
+            /* 16-bit Load instructions */
+            Instruction::LDrrnn(dest_reg, value) => self.ld_rrnn(dest_reg, value),
+            Instruction::LDSPHL() => self.ld_sphl(),
+            Instruction::PUSH(reg16) => self.push_rr(reg16),
+            Instruction::POP(reg16) => self.pop_rr(reg16),
 
             // CPU Control instructions
             Instruction::SCF => self.set_carry_flag(),
@@ -327,6 +331,32 @@ impl CPU {
             ArithmeticTarget16::SP,
             self.read_register16(ArithmeticTarget16::HL),
         )
+    }
+
+    fn push_rr(&mut self, reg: ArithmeticTarget16) {
+        let [msb, lsb] = self.read_register16(reg).to_be_bytes();
+        self.registers.sp -= 1;
+        self.write_memory(self.registers.sp, msb);
+        self.registers.sp -= 1;
+        self.write_memory(self.registers.sp, lsb);
+    }
+
+    fn pop_rr(&mut self, reg: ArithmeticTarget16) {
+        let lsb = self.read_memory(self.registers.sp);
+        self.registers.sp += 1;
+        let msb = self.read_memory(self.registers.sp);
+        self.registers.sp += 1;
+        let value = (msb as u16) << 8 + lsb;
+        self.write_register16(reg, value);
+    }
+
+    fn read_memory(&mut self, address: u16) -> u8 {
+        // # TODO: 04/09/2023 (jps): Implement this
+        return 1;
+    }
+
+    fn write_memory(&mut self, address: u16, value: u8) {
+        // # TODO: 04/09/2023 (jps): Implement this
     }
 
     fn read_register16(&self, reg: ArithmeticTarget16) -> u16 {

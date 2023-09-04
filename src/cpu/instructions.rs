@@ -21,8 +21,6 @@ pub enum Instruction {
     /* 8-bit Load instructions */
     LDrr(ArithmeticTarget, ArithmeticTarget), // LD r,r'
     LDri(ArithmeticTarget, u8),               // LD r,i
-    LDrrnn(ArithmeticTarget16, u16),          // LD rr,nn
-    LDSPHL(),                                 // LD SP, HL
 
     /* 8-bit Arithmetic/Logic instructions */
     ADDr(ArithmeticTarget), // add A,r
@@ -68,6 +66,12 @@ pub enum Instruction {
     BITnr(u8, ArithmeticTarget), // test bit n of r
     SETnr(u8, ArithmeticTarget), // set bit n of r
     RESnr(u8, ArithmeticTarget), // unset bit n of r
+
+    /* 16-bit load instructions */
+    LDrrnn(ArithmeticTarget16, u16), // LD rr,nn
+    LDSPHL(),                        // LD SP, HL
+    PUSH(ArithmeticTarget16),        // PUSH rr
+    POP(ArithmeticTarget16),         // POP rr
 
     /* CPU Control instructions */
     SCF,  // scf
