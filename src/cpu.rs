@@ -3,7 +3,7 @@ mod registers;
 
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 
-use crate::cpu::instructions::{ArithmeticTarget, ArithmeticTarget16, Instruction};
+use crate::cpu::instructions::{ArithmeticTarget16, ArithmeticTarget8, Instruction};
 use crate::cpu::registers::{FlagsRegister, Registers};
 
 pub struct CPU {
@@ -35,9 +35,9 @@ pub fn new_cpu() -> CPU {
 
 impl CPU {
     pub fn test_run(&mut self) {
-        self.execute(Instruction::ADDr(ArithmeticTarget::A));
+        self.execute(Instruction::ADDr(ArithmeticTarget8::A));
         self.execute(Instruction::ADDi(3));
-        self.execute(Instruction::ADCr(ArithmeticTarget::B));
+        self.execute(Instruction::ADCr(ArithmeticTarget8::B));
         self.execute(Instruction::ADCi(2));
     }
 
@@ -106,7 +106,7 @@ impl CPU {
         }
     }
 
-    fn add_register(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+    fn add_register(&mut self, reg: ArithmeticTarget8, with_carry: bool) {
         self.add_value(self.read_register(reg), with_carry);
     }
 
@@ -126,7 +126,7 @@ impl CPU {
         new_value
     }
 
-    fn sub_register(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+    fn sub_register(&mut self, reg: ArithmeticTarget8, with_carry: bool) {
         self.sub_value(self.read_register(reg), with_carry);
     }
 
@@ -146,7 +146,7 @@ impl CPU {
         new_value
     }
 
-    fn and_register(&mut self, reg: ArithmeticTarget) {
+    fn and_register(&mut self, reg: ArithmeticTarget8) {
         self.and_value(self.read_register(reg));
     }
 
@@ -155,7 +155,7 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn xor_register(&mut self, reg: ArithmeticTarget) {
+    fn xor_register(&mut self, reg: ArithmeticTarget8) {
         self.xor_value(self.read_register(reg));
     }
 
@@ -164,7 +164,7 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn or_register(&mut self, reg: ArithmeticTarget) {
+    fn or_register(&mut self, reg: ArithmeticTarget8) {
         self.or_value(self.read_register(reg));
     }
 
@@ -173,7 +173,7 @@ impl CPU {
         self.registers.a = new_value;
     }
 
-    fn cp_register(&mut self, reg: ArithmeticTarget) {
+    fn cp_register(&mut self, reg: ArithmeticTarget8) {
         self.cp_value(self.read_register(reg));
     }
 
@@ -181,7 +181,7 @@ impl CPU {
         self.sub(value);
     }
 
-    fn inc_register(&mut self, reg: ArithmeticTarget) {
+    fn inc_register(&mut self, reg: ArithmeticTarget8) {
         self.add_register(reg, false);
     }
 
@@ -189,7 +189,7 @@ impl CPU {
         self.write_register16(reg, self.read_register16(reg) + 1)
     }
 
-    fn dec_register(&mut self, reg: ArithmeticTarget) {
+    fn dec_register(&mut self, reg: ArithmeticTarget8) {
         self.sub_register(reg, false);
     }
 
@@ -205,11 +205,11 @@ impl CPU {
         self.registers.complement_carry_flag();
     }
 
-    fn ld_rr(&mut self, dest_reg: ArithmeticTarget, src_reg: ArithmeticTarget) {
+    fn ld_rr(&mut self, dest_reg: ArithmeticTarget8, src_reg: ArithmeticTarget8) {
         self.ld_ri(dest_reg, self.read_register(src_reg));
     }
 
-    fn ld_ri(&mut self, dest_reg: ArithmeticTarget, value: u8) {
+    fn ld_ri(&mut self, dest_reg: ArithmeticTarget8, value: u8) {
         self.write_register(dest_reg, value);
     }
 
@@ -229,7 +229,7 @@ impl CPU {
         self.registers.set_flags(l, false);
     }
 
-    fn rotate_r_left(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+    fn rotate_r_left(&mut self, reg: ArithmeticTarget8, with_carry: bool) {
         let mut val = self.read_register(reg);
         if with_carry {
             let chop = val & 1;
@@ -244,7 +244,7 @@ impl CPU {
         self.write_register(reg, val);
     }
 
-    fn rotate_r_right(&mut self, reg: ArithmeticTarget, with_carry: bool) {
+    fn rotate_r_right(&mut self, reg: ArithmeticTarget8, with_carry: bool) {
         let mut val = self.read_register(reg);
         if with_carry {
             let chop = val & 1;
@@ -260,14 +260,14 @@ impl CPU {
     }
 
     fn rotate_a_left(&mut self, with_carry: bool) {
-        self.rotate_r_left(ArithmeticTarget::A, with_carry);
+        self.rotate_r_left(ArithmeticTarget8::A, with_carry);
     }
 
     fn rotate_a_right(&mut self, with_carry: bool) {
-        self.rotate_r_right(ArithmeticTarget::A, with_carry);
+        self.rotate_r_right(ArithmeticTarget8::A, with_carry);
     }
 
-    fn shift_arithmetic(&mut self, reg: ArithmeticTarget, left: bool) {
+    fn shift_arithmetic(&mut self, reg: ArithmeticTarget8, left: bool) {
         let mut val = self.read_register(reg) as i8;
         if left {
             val = val << 1
@@ -277,7 +277,7 @@ impl CPU {
         self.write_register(reg, val as u8);
     }
 
-    fn shift_logical(&mut self, reg: ArithmeticTarget, left: bool) {
+    fn shift_logical(&mut self, reg: ArithmeticTarget8, left: bool) {
         let mut val = self.read_register(reg);
         if left {
             val = val << 1;
@@ -287,11 +287,11 @@ impl CPU {
         self.write_register(reg, val);
     }
 
-    fn swap_r(&mut self, reg: ArithmeticTarget) {
+    fn swap_r(&mut self, reg: ArithmeticTarget8) {
         self.write_register(reg, self.read_register(reg).rotate_left(4));
     }
 
-    fn bit_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+    fn bit_nr(&mut self, which: u8, reg: ArithmeticTarget8) {
         if which > 7 {
             panic!("trying to read {} bit of 8 bit register", which);
         }
@@ -302,7 +302,7 @@ impl CPU {
         self.registers.f.half_carry = true;
     }
 
-    fn set_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+    fn set_nr(&mut self, which: u8, reg: ArithmeticTarget8) {
         if which > 7 {
             panic!("trying to set {} bit of 8 bit register", which);
         }
@@ -312,7 +312,7 @@ impl CPU {
         self.write_register(reg, val);
     }
 
-    fn res_nr(&mut self, which: u8, reg: ArithmeticTarget) {
+    fn res_nr(&mut self, which: u8, reg: ArithmeticTarget8) {
         if which > 7 {
             panic!("trying to set {} bit of 8 bit register", which);
         }
@@ -377,39 +377,39 @@ impl CPU {
         }
     }
 
-    fn read_register(&self, reg: ArithmeticTarget) -> u8 {
+    fn read_register(&self, reg: ArithmeticTarget8) -> u8 {
         match reg {
-            ArithmeticTarget::A => self.registers.a,
-            ArithmeticTarget::B => self.registers.b,
-            ArithmeticTarget::C => self.registers.c,
-            ArithmeticTarget::D => self.registers.d,
-            ArithmeticTarget::E => self.registers.e,
-            ArithmeticTarget::H => self.registers.h,
-            ArithmeticTarget::L => self.registers.l,
+            ArithmeticTarget8::A => self.registers.a,
+            ArithmeticTarget8::B => self.registers.b,
+            ArithmeticTarget8::C => self.registers.c,
+            ArithmeticTarget8::D => self.registers.d,
+            ArithmeticTarget8::E => self.registers.e,
+            ArithmeticTarget8::H => self.registers.h,
+            ArithmeticTarget8::L => self.registers.l,
         }
     }
 
-    fn write_register(&mut self, reg: ArithmeticTarget, value: u8) {
+    fn write_register(&mut self, reg: ArithmeticTarget8, value: u8) {
         match reg {
-            ArithmeticTarget::A => {
+            ArithmeticTarget8::A => {
                 self.registers.a = value;
             }
-            ArithmeticTarget::B => {
+            ArithmeticTarget8::B => {
                 self.registers.b = value;
             }
-            ArithmeticTarget::C => {
+            ArithmeticTarget8::C => {
                 self.registers.c = value;
             }
-            ArithmeticTarget::D => {
+            ArithmeticTarget8::D => {
                 self.registers.d = value;
             }
-            ArithmeticTarget::E => {
+            ArithmeticTarget8::E => {
                 self.registers.e = value;
             }
-            ArithmeticTarget::H => {
+            ArithmeticTarget8::H => {
                 self.registers.h = value;
             }
-            ArithmeticTarget::L => {
+            ArithmeticTarget8::L => {
                 self.registers.l = value;
             }
         }

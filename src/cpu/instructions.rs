@@ -1,5 +1,5 @@
 #[derive(Copy, Clone)]
-pub enum ArithmeticTarget {
+pub enum ArithmeticTarget8 {
     A,
     B,
     C,
@@ -19,29 +19,29 @@ pub enum ArithmeticTarget16 {
 
 pub enum Instruction {
     /* 8-bit Load instructions */
-    LDrr(ArithmeticTarget, ArithmeticTarget), // LD r,r'
-    LDri(ArithmeticTarget, u8),               // LD r,i
+    LDrr(ArithmeticTarget8, ArithmeticTarget8), // LD r,r'
+    LDri(ArithmeticTarget8, u8),                // LD r,i
 
     /* 8-bit Arithmetic/Logic instructions */
-    ADDr(ArithmeticTarget), // add A,r
-    ADDi(u8),               // add A,i
-    ADCr(ArithmeticTarget), // adc A,r
-    ADCi(u8),               // adc A,i
-    SUBr(ArithmeticTarget), // sub A,r
-    SUBi(u8),               // sub A,i
-    SBCr(ArithmeticTarget), // sbc A,r
-    SBCi(u8),               // sbc A,i
-    ANDr(ArithmeticTarget), // and A,r
-    ANDi(u8),               // and A,i
-    XORr(ArithmeticTarget), // xor A,r
-    XORi(u8),               // xor A,i
-    ORr(ArithmeticTarget),  // or  A,r
-    ORi(u8),                // or  A,i
-    CPr(ArithmeticTarget),  // cp  A,r
-    CPi(u8),                // cp  A,i
-    INCr(ArithmeticTarget), // inc r
-    DECr(ArithmeticTarget), // dec r
-    CPL,                    // cpl
+    ADDr(ArithmeticTarget8), // add A,r
+    ADDi(u8),                // add A,i
+    ADCr(ArithmeticTarget8), // adc A,r
+    ADCi(u8),                // adc A,i
+    SUBr(ArithmeticTarget8), // sub A,r
+    SUBi(u8),                // sub A,i
+    SBCr(ArithmeticTarget8), // sbc A,r
+    SBCi(u8),                // sbc A,i
+    ANDr(ArithmeticTarget8), // and A,r
+    ANDi(u8),                // and A,i
+    XORr(ArithmeticTarget8), // xor A,r
+    XORi(u8),                // xor A,i
+    ORr(ArithmeticTarget8),  // or  A,r
+    ORi(u8),                 // or  A,i
+    CPr(ArithmeticTarget8),  // cp  A,r
+    CPi(u8),                 // cp  A,i
+    INCr(ArithmeticTarget8), // inc r
+    DECr(ArithmeticTarget8), // dec r
+    CPL,                     // cpl
 
     /* 16-bit Arithmetic/Logic instructions */
     ADDHLRR(ArithmeticTarget16), // add HL, rr
@@ -49,23 +49,23 @@ pub enum Instruction {
     DECRR(ArithmeticTarget16),   // dec rr
 
     /* Rotate and Shift instructions */
-    RLCA,                    // rotate A left
-    RLA,                     // rotate A left with carry
-    RRCA,                    // rotate A right
-    RRA,                     // rotate A right with carry
-    RLCr(ArithmeticTarget),  // rotate left
-    RRCr(ArithmeticTarget),  // rotate right
-    RLr(ArithmeticTarget),   // rotate left with carry
-    RRr(ArithmeticTarget),   // rotate right with carry
-    SLAr(ArithmeticTarget),  // shift left arithmetic
-    SRAr(ArithmeticTarget),  // shift right arithmetic
-    SRLr(ArithmeticTarget),  // shift right logical
-    SWAPr(ArithmeticTarget), // exchange low/hi nibble
+    RLCA,                     // rotate A left
+    RLA,                      // rotate A left with carry
+    RRCA,                     // rotate A right
+    RRA,                      // rotate A right with carry
+    RLCr(ArithmeticTarget8),  // rotate left
+    RRCr(ArithmeticTarget8),  // rotate right
+    RLr(ArithmeticTarget8),   // rotate left with carry
+    RRr(ArithmeticTarget8),   // rotate right with carry
+    SLAr(ArithmeticTarget8),  // shift left arithmetic
+    SRAr(ArithmeticTarget8),  // shift right arithmetic
+    SRLr(ArithmeticTarget8),  // shift right logical
+    SWAPr(ArithmeticTarget8), // exchange low/hi nibble
 
     /* Single bit operations */
-    BITnr(u8, ArithmeticTarget), // test bit n of r
-    SETnr(u8, ArithmeticTarget), // set bit n of r
-    RESnr(u8, ArithmeticTarget), // unset bit n of r
+    BITnr(u8, ArithmeticTarget8), // test bit n of r
+    SETnr(u8, ArithmeticTarget8), // set bit n of r
+    RESnr(u8, ArithmeticTarget8), // unset bit n of r
 
     /* 16-bit load instructions */
     LDrrnn(ArithmeticTarget16, u16), // LD rr,nn
