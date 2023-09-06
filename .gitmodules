@@ -1,0 +1,3 @@
+[submodule "sm83-test-data"]
+	path = sm83-test-data
+	url = https://github.com/adtennant/sm83-test-data.git
