@@ -1,15 +1,18 @@
+use serde::Deserialize;
+use std::fs::File;
+
 #[derive(Debug, Deserialize)]
 struct TestEntry {
     x: String,
     y: String,
     flags: String,
-    result: TestResult
+    result: TestResult,
 }
 
 #[derive(Debug, Deserialize)]
 struct TestResult {
     value: String,
-    flags: String
+    flags: String,
 }
 
 #[test]
