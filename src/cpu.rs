@@ -1,5 +1,5 @@
-mod instructions;
-mod registers;
+pub mod instructions;
+pub mod registers;
 
 use std::ops::{BitAnd, BitOr, BitXor, Not};
 
@@ -7,7 +7,7 @@ use crate::cpu::instructions::{ArithmeticTarget16, ArithmeticTarget8, Instructio
 use crate::cpu::registers::{FlagsRegister, Registers};
 
 pub struct CPU {
-    registers: Registers,
+    pub registers: Registers,
     pc: u16,
 }
 
@@ -41,7 +41,7 @@ impl CPU {
         self.execute(Instruction::ADCi(2));
     }
 
-    fn execute(&mut self, instruction: Instruction) {
+    pub fn execute(&mut self, instruction: Instruction) {
         match instruction {
             // // 8-bit Load instructions
             Instruction::LDrr(dest_reg, src_reg) => self.ld_rr(dest_reg, src_reg),
