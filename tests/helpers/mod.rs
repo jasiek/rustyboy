@@ -1,12 +1,16 @@
+use std::{error::Error, fs::File, io::BufReader};
+
 use num::Num;
 use serde::{Deserialize, Serialize};
+use serde_json::Deserializer;
+use subprocess::{Popen, PopenConfig, Redirection, Redirection::Pipe};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TestEntry {
-    x: String,
-    y: String,
-    flags: String,
-    result: TestResult,
+    pub x: String,
+    pub y: String,
+    pub flags: String,
+    pub result: TestResult,
 }
 
 fn value_as<T: Num>(value: &str) -> T where {
@@ -31,7 +35,23 @@ pub fn result_value<T: Num>(t: &TestEntry) -> T {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct TestResult {
-    value: String,
-    flags: String,
+pub struct TestResult {
+    pub value: String,
+    pub flags: String,
+}
+
+pub fn stream_json_from_array_file<F>(filename: &str, mut f: F)
+where
+    F: FnMut(TestEntry) -> (),
+{
+    let file = File::open(filename).unwrap();
+    let reader = BufReader::new(file);
+    let deserializer = serde_json::Deserializer::from_reader(reader);
+    let array_iter = deserializer.into_iter::<TestEntry>();
+    for item in array_iter {
+        match item {
+            Ok(value) => f(value),
+            Err(e) => panic!("died"),
+        }
+    }
 }

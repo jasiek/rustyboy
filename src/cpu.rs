@@ -41,6 +41,24 @@ impl CPU {
         self.execute(Instruction::ADCi(2));
     }
 
+    pub fn reset(&mut self) {
+        self.registers.a = 0;
+        self.registers.b = 0;
+        self.registers.c = 0;
+        self.registers.d = 0;
+        self.registers.e = 0;
+        self.registers.f = FlagsRegister {
+            zero: false,
+            subtract: false,
+            half_carry: false,
+            carry: false,
+        };
+        self.registers.h = 0;
+        self.registers.l = 0;
+        self.registers.sp = 0;
+        self.pc = 0;
+    }
+
     pub fn execute(&mut self, instruction: Instruction) {
         match instruction {
             // // 8-bit Load instructions
